@@ -1,25 +1,24 @@
 import React from "react";
-import mysql from "mysql2/promise";
+
 import User from "@/types/User";
 
 async function UserList() {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    database: "address_book",
-  });
+  const ans: any = await (
+    await fetch("http://localhost:3000/api/users")
+  ).json();
 
-  const [result, fields] = await connection.query("select * from users");
-
-  const data = result as User[];
-
-  return (
-    <div>
-      {data.map((u: User) => (
-        <h1>{u.username}</h1>
-      ))}
-    </div>
-  );
+  if (ans.status) {
+    const data = ans.data;
+    return (
+      <div>
+        {data.map((u: User) => (
+          <h1>{u.username}</h1>
+        ))}
+      </div>
+    );
+  } else {
+    return <h1>Some Error Occured</h1>;
+  }
 }
 
 export default UserList;
